@@ -7,12 +7,18 @@ interface AdContainerProps {
 }
 
 export default function AdContainer({ slotId = '1234567890', className = '', type = 'content' }: AdContainerProps) {
+  const pushedRef = React.useRef(false);
+
   useEffect(() => {
+    if (pushedRef.current) return;
+    pushedRef.current = true;
     try {
       // @ts-ignore
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.error('AdSense error', err);
+    } catch (err: any) {
+      if (err?.message && !err.message.includes('already have ads')) {
+        console.error('AdSense error', err);
+      }
     }
   }, []);
 
